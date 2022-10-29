@@ -7,11 +7,6 @@ import { getUserId } from '../utils';
 import { createTodo } from '../../helpers/todos'
 import { v4 } from 'uuid/v4'
 
-const AWS = require('aws-sdk')
-
-const docClient = new AWS.DynamoDB.DocumentClient()
-const { TODOS_TABLE } = process.env
-
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // const newTodo: CreateTodoRequest = JSON.parse(event.body)
@@ -22,13 +17,16 @@ export const handler = middy(
     const itemId = v4()
 
     const parsedBody = JSON.parse(event.body)
+    const userId = getUserId(event)
 
     const newTodo: CreateTodoRequest = {
-      id: itemId,
+      itemId,
+      userId,
+      done: false,
       ...parsedBody
     }
 
-    await createTodo(newTodo, docClient, TODOS_TABLE)
+    await createTodo(newTodo)
 
     return {
       statusCode: 201,
