@@ -10,6 +10,8 @@ import { getUserId } from '../utils';
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
+    const { groupId } = event.pathParameters
+
     // Write your code here
     const userId = await getUserId(event)
 

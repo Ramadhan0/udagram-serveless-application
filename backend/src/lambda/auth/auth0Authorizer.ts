@@ -6,6 +6,8 @@ import { createLogger } from '../../utils/logger'
 import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
 
+const auth0Secret = process.env.AUTH_0_SECRET
+
 const logger = createLogger('auth')
 
 // TODO: Provide a URL that can be used to download a certificate that can be used
@@ -61,8 +63,7 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   // You should implement it similarly to how it was implemented for the exercise for the lesson 5
   // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
 
-  if (token !== 'test') throw new Error('invalid token')
-  return undefined
+  return verify(token, auth0Secret) as JwtPayload
 }
 
 function getToken(authHeader: string): string {

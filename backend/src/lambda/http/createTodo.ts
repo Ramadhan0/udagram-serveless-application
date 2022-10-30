@@ -14,15 +14,19 @@ export const handler = middy(
 
     console.log(event)
 
+    const { groupId } = event.pathParameters
     const itemId = v4()
 
     const parsedBody = JSON.parse(event.body)
     const userId = getUserId(event)
+    const timeStamp = new Date().toISOString()
 
-    const newTodo: CreateTodoRequest = {
+    const newTodo = {
+      groupId,
       itemId,
       userId,
       done: false,
+      timeStamp,
       ...parsedBody
     }
 
