@@ -2,35 +2,17 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
-import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { getUserId } from '../utils';
 import { createTodo } from '../../helpers/todos'
-import { v4 } from 'uuid/v4'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    // const newTodo: CreateTodoRequest = JSON.parse(event.body)
+
     // TODO: Implement creating a new TODO item
-
-    console.log(event)
-
-    const { groupId } = event.pathParameters
-    const itemId = v4()
-
     const parsedBody = JSON.parse(event.body)
     const userId = getUserId(event)
-    const timeStamp = new Date().toISOString()
 
-    const newTodo = {
-      groupId,
-      itemId,
-      userId,
-      done: false,
-      timeStamp,
-      ...parsedBody
-    }
-
-    await createTodo(newTodo)
+    const newTodo = await createTodo(parsedBody, userId)
 
     return {
       statusCode: 201,
