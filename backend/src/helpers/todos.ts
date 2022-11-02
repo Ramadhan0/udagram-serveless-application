@@ -1,10 +1,10 @@
 import { v4 } from 'uuid/v4'
 import { TodosAccess } from './todosAcess';
-import * as createError from 'http-errors'
+// import * as createError from 'http-errors'
 import { TodoItem } from '../models/TodoItem'
 import { createLogger } from '../utils/logger'
 import { AttachmentUtils } from './attachmentUtils'
-import { Todo } from './../../../client/src/types/Todo'
+// import { Todo } from './../../../client/src/types/Todo'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
@@ -47,4 +47,7 @@ export const updateTodo = (data: UpdateTodoRequest, userId: string, itemId: stri
 }
 
 // create todo image
-export const createAttachmentPresignedUrl = () => logger.info('creating attachment presigned url')
+export const createAttachmentPresignedUrl = (todoId: string, userId: string) => {
+    logger.info('creating attachment presigned url')
+    return AttachmentUtils(todoId, userId)
+}
