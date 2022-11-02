@@ -28,8 +28,7 @@ export class TodosAccess {
                 ':groupId': groupId
 
             }
-        })
-            .promise()
+        }).promise()
 
         return todos as unknown as TodoItem[]
     }
@@ -41,7 +40,7 @@ export class TodosAccess {
         const todo = await this.docClient.put({
             Item: item,
             TableName: this.todosTable,
-        })
+        }).promise()
 
         return todo as unknown as TodoItem
     }
@@ -56,7 +55,7 @@ export class TodosAccess {
                 itemId,
                 userId
             },
-        })
+        }).promise()
 
         return todo
     }
@@ -72,7 +71,7 @@ export class TodosAccess {
                 userId,
                 data
             },
-        })
+        }).promise()
 
         return todo as unknown as TodoItem
     }
