@@ -17,12 +17,14 @@ export const createTodo = async (item: CreateTodoRequest, userId: string) => {
     logger.info('creating todo', item)
     const todoId = v4()
     const createdAt = new Date().toISOString()
+    const { ATTACHMENT_S3_BUCKET } = process.env;
 
     const newTodo: TodoItem = {
         todoId,
         userId,
         done: false,
         createdAt,
+        attachmentUrl: `https://${ATTACHMENT_S3_BUCKET}.s3.amazonaws.com/${todoId}`,
         ...item
     }
     return todosAccess.createTodo(newTodo)

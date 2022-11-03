@@ -24,13 +24,11 @@ provider:
   # Use these variables in the functions and resouorces section below. For example,
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
-    PROJECT_NAME: ProjectName-${self:provider.stage}
+    PROJECT_NAME: ramadhan-todo-${self:provider.stage}
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-todo-app-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: ramadhan-serverless-todo-app-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-    AUTH_0_SECRET_ID: Auth0Secret-${self:provider.stage}
-    AUTH_0_SECRET_FIELD: Auth0Secret
 
   logs:
     # Enable API Gateway logs
@@ -294,11 +292,11 @@ resources:
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
         CorsConfiguration:
           CorsRules:
-            - AllowedMethods:
-                - "*"
-              AllowedOrigins:
+            - AllowedOrigins:
                 - "*"
               AllowedHeaders:
+                - "*"
+              AllowedMethods:
                 - GET
                 - PUT
                 - POST
@@ -318,6 +316,6 @@ resources:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
               Principal: "*"
-              Actions: "s3:GetObject"
-              Resource: "arn:aws:iam::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
+              Action: "s3:GetObject"
+              Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
         Bucket: !Ref AttachmentsBucket
