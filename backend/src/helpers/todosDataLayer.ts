@@ -16,43 +16,48 @@ export class TodosAccess {
         private readonly todosTable: string = process.env.TODOS_TABLE
     ) { }
 
-    async getTodosForUser(groupId: string, userId: string): Promise<TodoItem[]> {
+    async getTodosForUser(userId: string): Promise<TodoItem[]> {
 
         logger.info('fetching todos for user', userId)
 
         const todos = await this.docClient.query({
             TableName: this.todosTable,
-            KeyConditionExpression: 'userId = :userId AND groupId = :groupId',
+            KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: {
                 ':userId': userId,
-                ':groupId': groupId
 
             }
         }).promise()
 
-        return todos as unknown as TodoItem[]
+        console.log(todos)
+
+        const { Items } = todos
+
+        return Items as TodoItem[]
     }
 
-    async createTodo(item: TodoItem) {
+    async createTodo(todo: TodoItem) {
 
-        logger.info('creating todo for user', item)
+        logger.info('creating todo for user', todo)
 
-        const todo = await this.docClient.put({
-            Item: item,
+        const createTodo = await this.docClient.put({
+            Item: todo,
             TableName: this.todosTable,
         }).promise()
 
-        return todo as unknown as TodoItem
+        console.log(createTodo)
+
+        return todo as TodoItem
     }
 
-    async deleteTodo(itemId: string, userId: string) {
+    async deleteTodo(todoId: string, userId: string) {
 
-        logger.info('User was authorized', { user: userId, todo: itemId })
+        logger.info('User was authorized', { user: userId, todo: todoId })
 
         const todo = await this.docClient.delete({
             TableName: this.todosTable,
             Key: {
-                itemId,
+                todoId,
                 userId
             },
         }).promise()
@@ -60,20 +65,33 @@ export class TodosAccess {
         return todo
     }
 
-    async updateTodo(data: TodoUpdate, itemId: string, userId: string) {
+    async updateTodo(data: TodoUpdate, todoId: string, userId: string) {
 
-        logger.info('updating user todo', { userId, itemId, data })
+        logger.info('updating user todo', { userId, todoId, data })
 
-        const todo = await this.docClient.update({
+        const updateTodo = await this.docClient.update({
             TableName: this.todosTable,
             Key: {
-                itemId,
                 userId,
-                data
+                todoId
             },
+            UpdateExpression: "set #a = :a, #b = :b, #c = :c",
+            ExpressionAttributeNames: {
+                "#a": "name",
+                "#b": "dueDate",
+                "#c": "done"
+            },
+            ExpressionAttributeValues: {
+                ":a": data['name'],
+                ":b": data['dueDate'],
+                ":c": data['done']
+            },
+            ReturnValues: "ALL_NEW"
         }).promise()
 
-        return todo as unknown as TodoItem
+        const { Attributes } = updateTodo
+
+        return Attributes as TodoUpdate
     }
 
 }

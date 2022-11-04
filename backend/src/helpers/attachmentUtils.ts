@@ -10,11 +10,11 @@ const {
 
 const s3_client = new XAWS.S3({ signatureVersion: 'v4' })
 
-// TODO: Implement the fileStogare logic
-export const AttachmentUtils = (todoId: string, userId: string) => {
+// TODO: Implement the file Storage logic
+export const AttachmentUtils = (todoId: string) => {
     return s3_client.getSignedUrl('putObject', {
         Bucket: ATTACHMENT_S3_BUCKET,
-        Key: [todoId, userId],
+        Key: [todoId],
         Expires: SIGNED_URL_EXPIRATION
-    })
+    }) as string
 }

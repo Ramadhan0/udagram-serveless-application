@@ -1,5 +1,5 @@
 import { v4 } from 'uuid/v4'
-import { TodosAccess } from './todosAcess';
+import { TodosAccess } from './todosDataLayer';
 // import * as createError from 'http-errors'
 import { TodoItem } from '../models/TodoItem'
 import { createLogger } from '../utils/logger'
@@ -10,6 +10,12 @@ import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
 const todosAccess = new TodosAccess()
 const logger = createLogger('TodosBusinessLogic')
+
+// get todos for a single user
+export const getTodosForUser = (userId: string) => {
+    logger.info('getting users todos', { userId })
+    return todosAccess.getTodosForUser(userId)
+}
 
 // TODO: Implement businessLogic
 export const createTodo = async (item: CreateTodoRequest, userId: string) => {
@@ -36,12 +42,6 @@ export const deleteTodo = (userId: string, itemId: string) => {
     return todosAccess.deleteTodo(itemId, userId)
 }
 
-// get todos for a single user
-export const getTodosForUser = (groupId: string, userId: string) => {
-    logger.info('getting users todos', { groupId, userId })
-    return todosAccess.getTodosForUser(groupId, userId)
-}
-
 // update todo
 export const updateTodo = (data: UpdateTodoRequest, userId: string, itemId: string) => {
     logger.info('updating Todo', { data, userId, itemId })
@@ -49,7 +49,7 @@ export const updateTodo = (data: UpdateTodoRequest, userId: string, itemId: stri
 }
 
 // create todo image
-export const createAttachmentPresignedUrl = (todoId: string, userId: string) => {
+export const createAttachmentPresignedUrl = (todoId: string) => {
     logger.info('creating attachment presigned url')
-    return AttachmentUtils(todoId, userId)
+    return AttachmentUtils(todoId)
 }
