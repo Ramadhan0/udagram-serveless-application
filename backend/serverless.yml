@@ -1,4 +1,3 @@
-# TODO: Change the name of the org
 org: ramadhan
 app: serverless-todo-app
 service: serverless-todo-app
@@ -8,7 +7,6 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
-  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -21,8 +19,6 @@ provider:
     lambda: true
     apiGateway: true
 
-  # Use these variables in the functions and resouorces section below. For example,
-  # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
     PROJECT_NAME: ramadhan-todo-${self:provider.stage}
     TODOS_TABLE: Todos-${self:provider.stage}
@@ -46,54 +42,10 @@ provider:
             - xray:PutTraceSegments
           Resource: "*"
 
-  IamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Scan
-        - dynamodb:PutItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-
-custom:
-  documentation:
-    api:
-      info:
-        version: "1.0.0"
-        title: serverless-api
-        description: serverless-api
-    models:
-      - name: CreateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-      - name: UpdateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-            - done
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-            done:
-              type: boolean
-
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
-  # TODO: Configure this function -
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -116,8 +68,6 @@ functions:
         Resource:
           - "*"
 
-  # TODO: Configure this function -
-  # To refer to an AWS resource defined in the "Resources" section, you can use "Resource: !GetAtt <resource-name>.Arn"
   # To validate incoming HTTP requests, we have provided the request schemas in function definition below.
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
@@ -131,11 +81,6 @@ functions:
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
-          documentation:
-            summary: Create new Todo
-            description: Create new Todo
-            requestModels:
-            "application/json": CreateTodoRequest
 
     # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
@@ -150,7 +95,6 @@ functions:
         Resource:
           - "*"
 
-  # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
@@ -164,11 +108,6 @@ functions:
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
-          documentation:
-            summary: Create new Todo
-            description: Create new Todo
-            requestModels:
-            "application/json": UpdateTodoRequest
 
     # Iam role statements
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-todo-role-${self:provider.stage}
@@ -183,7 +122,6 @@ functions:
         Resource:
           - "*"
 
-  # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -205,7 +143,6 @@ functions:
         Resource:
           - "*"
 
-  # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
@@ -234,9 +171,6 @@ resources:
         ValidateRequestBody: true
         ValidateRequestParameters: false
 
-    # Add necessary AWS resources. You will need at least the following AWS resources
-    # TODO: Fill the properties
-    # Feel free to change the names as you like.
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
@@ -259,7 +193,7 @@ resources:
         RestApiId:
           Ref: ApiGatewayRestApi
 
-    # TODO: Create a DynamoDB table with local secondary index and a composite key
+    # Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -284,8 +218,8 @@ resources:
         ValidateRequestBody: true
         ValidateRequestParameters: false
 
-    # TODO: Complete the bucket properties below.
-    # Do not forget to add the CorsConfiguration property
+    # Create the bucket.
+    # Add CorsConfiguration property
     AttachmentsBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -304,8 +238,7 @@ resources:
                 - HEAD
               MaxAge: 3000
 
-    # TODO: Complete the policy below and attach it to the bucket defined above
-    # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
+    # The S3 bucket policy
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:

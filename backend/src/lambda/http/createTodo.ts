@@ -7,22 +7,38 @@ import { createTodo } from '../../helpers/todoBusinessLogic'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    try {
+      // TODO: Implement creating a new TODO item
+      const parsedBody = JSON.parse(event.body)
+      const userId = getUserId(event)
 
-    // TODO: Implement creating a new TODO item
-    const parsedBody = JSON.parse(event.body)
-    const userId = getUserId(event)
+      const newTodo = await createTodo(parsedBody, userId)
 
-    const newTodo = await createTodo(parsedBody, userId)
-
-    return {
-      statusCode: 201,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        newTodo
-      })
+      return {
+        statusCode: 201,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          newTodo
+        })
+      }
+    } catch (error) {
+      const errorMessage = error.message
+      console.log(error)
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          error,
+          errorMessage
+        })
+      }
     }
+
+
   }
 )
 

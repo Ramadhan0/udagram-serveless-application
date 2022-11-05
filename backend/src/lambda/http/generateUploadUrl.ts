@@ -7,20 +7,38 @@ import { createAttachmentPresignedUrl } from '../../helpers/todoBusinessLogic'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const todoId = event.pathParameters.todoId
-    // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
 
-    const url = createAttachmentPresignedUrl(todoId)
+    try {
+      const todoId = event.pathParameters.todoId
+      // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
+      const url = createAttachmentPresignedUrl(todoId)
 
-    return {
-      statusCode: 201,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        url
-      })
+      return {
+        statusCode: 201,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          url
+        })
+      }
+    } catch (error) {
+
+      const errorMessage = error.message
+      console.log(error)
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          error,
+          errorMessage
+        })
+      }
     }
+
+
   }
 )
 

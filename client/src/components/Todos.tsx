@@ -46,17 +46,21 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
+      if (!this.state.newTodoName) return alert('please provide todo name')
+      this.setState({ loadingTodos: true })
       const dueDate = this.calculateDueDate()
-      const newTodo = await createTodo(this.props.auth.getIdToken(), {
+      await createTodo(this.props.auth.getIdToken(), {
         name: this.state.newTodoName,
         dueDate
       })
+      const todos = await getTodos(this.props.auth.getIdToken())
+      console.log(todos, 'fetching todos')
       this.setState({
-        todos: [...this.state.todos, newTodo],
-        newTodoName: ''
+        todos,
+        loadingTodos: false
       })
     } catch {
-      alert('Todo creation failed')
+      return alert('Todo creation failed')
     }
   }
 
@@ -67,7 +71,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         todos: this.state.todos.filter(todo => todo.todoId !== todoId)
       })
     } catch {
-      alert('Todo deletion failed')
+      return alert('Todo deletion failed')
     }
   }
 
@@ -85,21 +89,23 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         })
       })
     } catch {
-      alert('Todo deletion failed')
+      return alert('Todo deletion failed')
     }
   }
 
   async componentDidMount() {
     try {
       const todos = await getTodos(this.props.auth.getIdToken())
+      console.log(todos, 'fetching todos')
       this.setState({
         todos,
         loadingTodos: false
       })
     } catch (e: any) {
-      alert(`Failed to fetch todos: ${e.message}`)
+      return alert(`Failed to fetch todos: ${e.message}`)
     }
   }
+
 
   render() {
     return (
@@ -159,20 +165,20 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   renderTodosList() {
     return (
       <Grid padded>
-        {this.state.todos.map((todo, pos) => {
+        {this.state.todos && this.state.todos.map((todo, pos) => {
           return (
-            <Grid.Row key={todo.todoId}>
+            <Grid.Row key={todo && todo.todoId}>
               <Grid.Column width={1} verticalAlign="middle">
                 <Checkbox
                   onChange={() => this.onTodoCheck(pos)}
-                  checked={todo.done}
+                  checked={todo && todo.done}
                 />
               </Grid.Column>
               <Grid.Column width={10} verticalAlign="middle">
-                {todo.name}
+                {todo && todo.name}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {todo.dueDate}
+                {todo && todo.dueDate}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
                 <Button
@@ -192,7 +198,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                   <Icon name="delete" />
                 </Button>
               </Grid.Column>
-              {todo.attachmentUrl && (
+              {todo && todo.attachmentUrl && (
                 <Image src={todo.attachmentUrl} size="small" wrapped />
               )}
               <Grid.Column width={16}>

@@ -1,5 +1,4 @@
-import { v4 } from 'uuid/v4'
-import { TodosAccess } from './todosDataLayer';
+import { TodosAccess } from './todosDataLayer'
 // import * as createError from 'http-errors'
 import { TodoItem } from '../models/TodoItem'
 import { createLogger } from '../utils/logger'
@@ -7,6 +6,8 @@ import { AttachmentUtils } from './attachmentUtils'
 // import { Todo } from './../../../client/src/types/Todo'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+
+const uuidv4 = require('uuid/v4');
 
 const todosAccess = new TodosAccess()
 const logger = createLogger('TodosBusinessLogic')
@@ -21,7 +22,7 @@ export const getTodosForUser = (userId: string) => {
 export const createTodo = async (item: CreateTodoRequest, userId: string) => {
 
     logger.info('creating todo', item)
-    const todoId = v4()
+    const todoId = uuidv4()
     const createdAt = new Date().toISOString()
     const { ATTACHMENT_S3_BUCKET } = process.env;
 

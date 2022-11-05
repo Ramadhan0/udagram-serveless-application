@@ -14,7 +14,7 @@ const s3_client = new XAWS.S3({ signatureVersion: 'v4' })
 export const AttachmentUtils = (todoId: string) => {
     return s3_client.getSignedUrl('putObject', {
         Bucket: ATTACHMENT_S3_BUCKET,
-        Key: [todoId],
-        Expires: SIGNED_URL_EXPIRATION
+        Key: todoId,
+        Expires: parseInt(SIGNED_URL_EXPIRATION)
     }) as string
 }
