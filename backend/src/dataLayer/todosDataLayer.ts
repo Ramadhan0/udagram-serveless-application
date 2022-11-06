@@ -1,8 +1,8 @@
 import * as AWS from 'aws-sdk'
-import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
-import { TodoUpdate } from '../models/TodoUpdate';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { createLogger } from '../utils/logger'
+import { TodoUpdate } from '../models/TodoUpdate'
+import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
 const AWSXRay = require('aws-xray-sdk')
 
@@ -12,8 +12,8 @@ const logger = createLogger('TodosAccess')
 export class TodosAccess {
 
     constructor(
+        private readonly todosTable: string = process.env.TODOS_TABLE,
         private readonly docClient: DocumentClient = createDynamoDBClient(),
-        private readonly todosTable: string = process.env.TODOS_TABLE
     ) { }
 
     async getTodosForUser(userId: string): Promise<TodoItem[]> {
@@ -110,4 +110,20 @@ function createDynamoDBClient() {
         region: 'localhost',
         endpoint: 'http://localhost:8000'
     })
+}
+
+
+// TODO: Implement the file Storage logic
+export const AttachmentUtils = (todoId: string) => {
+    const {
+        ATTACHMENT_S3_BUCKET,
+        SIGNED_URL_EXPIRATION
+    } = process.env
+
+    const s3_client = new XAWS.S3({ signatureVersion: 'v4' })
+    return s3_client.getSignedUrl('putObject', {
+        Bucket: ATTACHMENT_S3_BUCKET,
+        Key: todoId,
+        Expires: parseInt(SIGNED_URL_EXPIRATION)
+    }) as string
 }

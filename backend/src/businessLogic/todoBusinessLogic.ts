@@ -1,9 +1,6 @@
-import { TodosAccess } from './todosDataLayer'
-// import * as createError from 'http-errors'
+import { TodosAccess, AttachmentUtils } from '../dataLayer/todosDataLayer'
 import { TodoItem } from '../models/TodoItem'
 import { createLogger } from '../utils/logger'
-import { AttachmentUtils } from './attachmentUtils'
-// import { Todo } from './../../../client/src/types/Todo'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 

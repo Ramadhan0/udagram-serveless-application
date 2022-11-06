@@ -41,6 +41,41 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
+custom:
+  documentation:
+    api:
+      info:
+        version: "1.0.0"
+        title: serverless-api
+        description: serverless-api
+    models:
+      - name: CreateTodoRequest
+        contentType: "application/json"
+        schema:
+          required:
+            - name
+            - dueDate
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+      - name: UpdateTodoRequest
+        contentType: "application/json"
+        schema:
+          required:
+            - name
+            - dueDate
+            - done
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+            done:
+              type: boolean
 
 functions:
   Auth:
@@ -81,6 +116,11 @@ functions:
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
+          documentation:
+            summary: Create new Todo
+            description: Create new Todo
+            requestModels:
+            "application/json": CreateTodoRequest
 
     # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
@@ -108,6 +148,11 @@ functions:
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
+          documentation:
+            summary: update Todo
+            description: Create new Todo
+            requestModels:
+            "application/json": UpdateTodoRequest
 
     # Iam role statements
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-todo-role-${self:provider.stage}

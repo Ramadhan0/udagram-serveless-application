@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { getUserId } from '../utils';
-import { createTodo } from '../../helpers/todoBusinessLogic'
+import { createTodo } from '../../businessLogic/todoBusinessLogic'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
