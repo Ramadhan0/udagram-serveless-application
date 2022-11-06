@@ -50,9 +50,9 @@ export class TodosAccess {
         return todo as TodoItem
     }
 
-    async deleteTodo(todoId: string, userId: string) {
+    async deleteTodo(userId: string, todoId: string) {
 
-        logger.info('User was authorized', { user: userId, todo: todoId })
+        logger.info('delete user\'s todo', { user: userId, todo: todoId })
 
         const todo = await this.docClient.delete({
             TableName: this.todosTable,
@@ -61,6 +61,8 @@ export class TodosAccess {
                 userId
             },
         }).promise()
+
+        logger.info('deleted todo', todo)
 
         return todo
     }

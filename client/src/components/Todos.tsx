@@ -59,7 +59,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         loadingTodos: false
       })
     } catch {
-      return alert('Todo creation failed')
+      return alert('Todo creation failed, please provide todo name')
     }
   }
 

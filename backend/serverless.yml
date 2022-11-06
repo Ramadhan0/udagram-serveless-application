@@ -7,6 +7,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -119,8 +120,10 @@ functions:
           documentation:
             summary: Create new Todo
             description: Create new Todo
+            requestBody:
+              description: Create new Todo body
             requestModels:
-            "application/json": CreateTodoRequest
+              "application/json": CreateTodoRequest
 
     # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
@@ -150,9 +153,11 @@ functions:
               application/json: ${file(models/update-todo-model.json)}
           documentation:
             summary: update Todo
-            description: Create new Todo
+            description: Update Todo
+            requestBody:
+              description: Update Todo body
             requestModels:
-            "application/json": UpdateTodoRequest
+              "application/json": UpdateTodoRequest
 
     # Iam role statements
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-todo-role-${self:provider.stage}

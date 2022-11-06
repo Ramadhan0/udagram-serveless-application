@@ -35,15 +35,15 @@ export const createTodo = async (item: CreateTodoRequest, userId: string) => {
 }
 
 //  delete todos
-export const deleteTodo = (userId: string, itemId: string) => {
-    logger.info('deleting todo', { userId, itemId })
-    return todosAccess.deleteTodo(itemId, userId)
+export const deleteTodo = (userId: string, todoId: string) => {
+    logger.info('deleting todo', { userId, todoId })
+    return todosAccess.deleteTodo(userId, todoId)
 }
 
 // update todo
-export const updateTodo = (data: UpdateTodoRequest, userId: string, itemId: string) => {
-    logger.info('updating Todo', { data, userId, itemId })
-    return todosAccess.updateTodo(data, userId, itemId)
+export const updateTodo = (data: UpdateTodoRequest, userId: string, todoId: string) => {
+    logger.info('updating Todo', { data, userId, todoId })
+    return todosAccess.updateTodo(data, todoId, userId,)
 }
 
 // create todo image

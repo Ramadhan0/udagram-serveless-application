@@ -14,7 +14,9 @@ export const handler = middy(
       const userId = getUserId(event)
 
       // TODO: Remove a TODO item by id
-      const deleteT = await deleteTodo(todoId, userId)
+      const deleteT = await deleteTodo(userId, todoId)
+
+      console.log(deleteT)
 
       return {
         statusCode: 200,
